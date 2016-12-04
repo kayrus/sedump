@@ -1,9 +1,5 @@
 FROM ubuntu:14.04
 
-# define variables
-ENV setools_repo https://github.com/TresysTechnology/setools
-ENV setools_rev HEAD
-
 # install build dependencies
 RUN apt-get update && \
     apt-get install -y sudo git \
@@ -35,8 +31,12 @@ RUN adduser --disabled-password --gecos '' docker && \
 USER docker
 WORKDIR /home/docker
 
+# define variables
+ENV setools_repo https://github.com/kayrus/sedump
+ENV setools_rev HEAD
+
 # clone repositories
-RUN git clone ${setools_repo} && \
+RUN git clone ${setools_repo} setools && \
     cd ./setools/ && \
     git reset --hard ${setools_rev} && \
     # Download current SELinux userspace tools and libraries
@@ -53,7 +53,7 @@ RUN git clone ${setools_repo} && \
     # Ubuntu 12.04's flex generates a redundant decl in libqpol
     sed -i -e "/Wwrite-strings/s/,/, '-Wno-redundant-decls',/" setup.py && \
     python setup.py build && \
-    sudo python setup.py install
+    sudo python setup.py develop
 
 # Try to reduce size of container.
 RUN sudo apt-get clean && sudo rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
