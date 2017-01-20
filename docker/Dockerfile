@@ -32,7 +32,7 @@ USER docker
 WORKDIR /home/docker
 
 # define variables
-ENV setools_repo https://github.com/kayrus/sedump
+ENV setools_repo https://github.com/TresysTechnology/setools
 ENV setools_rev HEAD
 
 # clone repositories

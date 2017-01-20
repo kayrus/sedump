@@ -102,6 +102,13 @@ class SELinuxPolicy(setools.SELinuxPolicy):
             stmt += "{0}\n".format(attribute_.statement())
         stmt += "\n"
 
+        # define permissive types
+        stmt += comment("Define permissive types")
+        for type_ in cond_sort(self.types()):
+            if type_.ispermissive:
+              stmt += "permissive {0};\n".format(type_)
+        stmt += "\n"
+
         # define types, aliases and attributes
         stmt += comment("Define type identifiers")
         for type_ in cond_sort(self.types()):
@@ -217,7 +224,7 @@ try:
     p = SELinuxPolicy(args.policy)
 
     # write to file or stdout
-    output = sys.stdout if not args.output else open(args.output, "wb")
+    output = sys.stdout if not args.output else open(args.output, "wt")
     with output as fout:
         fout.write(str(p))
 
